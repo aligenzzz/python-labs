@@ -1,13 +1,16 @@
+import constants as const
+
+
 # 2.)
 def my_func1(number1, number2, operation):
     match operation:
-        case "add":
+        case const.SUMMATION:
             return number1 + number2
-        case "sub":
+        case const.SUBTRACTION:
             return number1 - number2
-        case "mul":
+        case const.MULTIPLICATION:
             return number1 * number2
-        case "div":
+        case const.DIVISION:
             if number2 is 0:
                 return "NaN"
             return number1 / number2
