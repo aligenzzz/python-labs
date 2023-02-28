@@ -3,6 +3,12 @@ import constants as const
 
 # 2.)
 def my_func1(number1, number2, operation):
+
+    if type(number1) is not int and type(number1) is not float:
+        return "NaN"
+    if type(number2) is not int and type(number2) is not float:
+        return "NaN"
+
     match operation:
         case const.SUMMATION:
             return number1 + number2
