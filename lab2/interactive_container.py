@@ -50,14 +50,27 @@ class InteractiveContainer:
             print("The matched elements:", *matched_elements)
 
     def save(self):
+        # for concatenation
+        temp_data = self.data
+        with open('text_files/data.json', 'r') as file:
+            self.data = load(file)
+        if self.username in temp_data and self.username in self.data:
+            if temp_data[self.username] != self.data[self.username]:
+                self.add(*temp_data[self.username])
+
         if self.username not in self.data:
-            self.data[self.username] = []#$
+            self.data[self.username] = []
         with open('text_files/data.json', 'w') as file:
             dump(self.data, file)
 
     def load(self):
+        temp_data = self.data
         with open('text_files/data.json', 'r') as file:
             self.data = load(file)
+        # for concatenation
+        if self.username in temp_data and self.username in self.data:
+            if temp_data[self.username] != self.data[self.username]:
+                self.add(*temp_data[self.username])
 
     def switch(self, username):
         self.username = username

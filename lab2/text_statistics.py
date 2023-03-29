@@ -51,14 +51,29 @@ class TextStatistics:
     def top_k_n_grams(self, k: int = 10, n: int = 4):
         words = self._split_into_words_()
         ngrams = [tuple(words[i:i+n]) for i in range(len(words) - n + 1)]
+
         ngram_count = Counter(ngrams)
         return [ngram for ngram, count in ngram_count.most_common(k)]
+
+        # without Counter
+        # ngram_count = self._count_n_grams_(ngrams)
+        # return sorted(ngram_count.items(), key=lambda x: x[1], reverse=True)
+
+    @staticmethod
+    def _count_n_grams_(ngrams):
+        ngram_count = {}
+        for ngram in ngrams:
+            if ngram not in ngram_count:
+                ngram_count[ngram] = 1
+            else:
+                ngram_count[ngram] += 1
+        return ngram_count
 
     def _split_into_words_(self):
         text = self._read_file_()
         words = split(rexp.WORD, text)
         # because regex expression doesn't work in the end of text + word != number
-        words = [sub(r'[?.!]+$', r'', word.lower()) for word in words if not match(r'\d+', word)]
+        words = [sub(r'[?.!\s]+$', r'', word.lower()) for word in words if not match(r'\d+', word)]
         return words
 
     def _split_into_sentences_(self):
