@@ -1,5 +1,8 @@
 from json_serializer import JsonSerializer
 import types
+import math
+import sys as c
+A = 6
 
 class Person:
     def __init__(self, name, age):
@@ -7,7 +10,7 @@ class Person:
         self.age = age
 
 if __name__ == '__main__':
-    a = [6, 9, "7658675", {89: 89, 69: 89}]
+    a = [6, 9, "7658675", {89: 89, 69: 89}, [1 , 2 , 3]]
     b = (5, "jfkg")
     c = True
     d = "abc"
@@ -45,6 +48,7 @@ if __name__ == '__main__':
 
 
     def my_func(x):
+        x = x + math.fabs(A)
         return x ** 2
 
 
@@ -56,6 +60,10 @@ if __name__ == '__main__':
 
     person = Person("jdfjd", 56)
     print(vars(person))
+
+    print(json_serializer.dumps(my_func))
+
+
 
 
 
