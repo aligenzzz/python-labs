@@ -1,8 +1,10 @@
 from json_serializer import JsonSerializer
 import types
 import math
-import sys as c
+import regex as re
 A = 6
+
+from constants import STRING_TYPES
 
 class Person:
     def __init__(self, name, age):
@@ -10,7 +12,7 @@ class Person:
         self.age = age
 
 if __name__ == '__main__':
-    a = [6, 9, "7658675", {89: 89, 69: 89}, [1 , 2 , 3]]
+    a = [6, 9, "7658675", {89: 89, 69: 89}, [1, 2 , 3]]
     b = (5, "jfkg")
     c = True
     d = "abc"
@@ -25,8 +27,6 @@ if __name__ == '__main__':
 
     # print(dumps(json_serializer))
 
-    s = {4,4,4}
-    print(json_serializer.dumps(s))
     z = 5 + 9j
     print(json_serializer.dumps(z))
     print(json_serializer.dumps(g))
@@ -60,8 +60,14 @@ if __name__ == '__main__':
 
     person = Person("jdfjd", 56)
     print(vars(person))
+    print(dir(person))
 
     print(json_serializer.dumps(my_func))
+    print(json_serializer.dumps(person))
+
+    kkkkk = '{"type": list, "source": [6, 9, "7658675", {89: 89, 69: 89}, {"type": list, "source": [1, 2, 3]}]}'
+    print(json_serializer.loads(kkkkk))
+
 
 
 

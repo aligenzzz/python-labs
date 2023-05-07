@@ -2,6 +2,8 @@
 PRIMITIVE_COLLECTIONS = (list, tuple, set, frozenset, bytes, bytearray)
 PRIMITIVE_TYPES = (bool, int, float, str, complex, *PRIMITIVE_COLLECTIONS, dict)
 
+STRING_TYPES = {"list": list, "tuple": tuple, "set": set, "frozenset": frozenset, "bytes": bytes, "bytearray": bytearray}
+
 FUNCTION_PROPERTIES = ("co_argcount",   # number of arguments (not including keyword only arguments, * or **args)
                        "co_code",       # string of raw compiled bytecode
                        "co_cellvars",   # tuple of names of cell variables (referenced by containing scopes)
@@ -17,4 +19,24 @@ FUNCTION_PROPERTIES = ("co_argcount",   # number of arguments (not including key
                        "co_nlocals",     # number of local variables
                        "co_stacksize",   # virtual machine stack space required
                        "co_varnames")    # tuple of names of arguments and local variables
+
+# regex expressions
+BOOL = r'true|false'
+INT = r'[+-]?\d+'
+FLOAT = r'[+-]?[\d.]+'
+COMPLEX = r'(?<=\()[\d.+-j]+(?=\))'
+NONE = r'null'
+STRING = r'".+"'
+
+LIST = r'\[(?:.)*\]'
+DICT = r'{(?:[^{}]*|(?R))*}'
+LIST_DICT = f'{LIST}|{DICT}'
+
+TYPE = r'^(?:{"type": )(\w+)(?=,)'
+SOURCE = r'(?<="source": )(.+)(?=})'
+
+KEY = r'((?<=, )|(?<={))(.*?)(?=:)'
+VALUE = r'(?<=:\s)(.*?)(?=[,}])'
+
+LIST_ELEM = r'(?<=[\[ ])(.*?)(?=[,\]])'
 
