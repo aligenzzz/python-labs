@@ -41,7 +41,7 @@ class JsonSerializer:
 
     def _get_function(self, obj):
         obj_name = obj.__class__.__name__
-        code = {k: v for k, v in getmembers(obj.__code__) if k in FUNCTION_PROPERTIES}
+        code = {k: v for k, v in getmembers(obj.__code__) if k in CODE_PROPERTIES}
         globals_ = self._get_globals(obj)
         name = obj.__name__
         defaults = obj.__defaults__
@@ -52,17 +52,17 @@ class JsonSerializer:
                  f'"globals": {globals_}, ' \
                  f'"name": {self.dumps(name)}, ' \
                  f'"defaults": {self.dumps(defaults)}, ' \
-                 f'"closure": {self.dumps(closure)} }}}}'
+                 f'"closure": {self.dumps(closure)}}}}}'
 
         return result
 
-    def _get_globals(self, obj):
+    def _get_globals(self, obj, clausura=None):
         result = ''
 
         for element in obj.__code__.co_names:
             if element in obj.__globals__:
                 if isinstance(obj.__globals__[element], types.ModuleType):
-                    result += f'"{element}": {self.dumps(obj.__globals__[element].__name__)}, '
+                    result += f'"module math": {self.dumps(obj.__globals__[element].__name__)}, '
                 elif element != obj.__code__.co_name:
                     result += f'"{element}": {self.dumps(obj.__globals__[element])}, '
                 else:
@@ -95,11 +95,13 @@ class JsonSerializer:
         elif re.fullmatch(LIST, obj):
             stack = [el for el in re.findall(LIST_DICT, obj[1:-1])]
             stack = stack[::-1]
-            s = '[' + re.sub(LIST_DICT, r'--', obj[1:-1]) + ']'
+            raw_str = '[' + re.sub(LIST_DICT, r'--', obj[1:-1]) + ']'
 
             result = list()
-            for e in re.findall(LIST_ELEM, s):
-                if e == '--':
+            for e in re.findall(LIST_ELEM, raw_str):
+                if e == '':
+                    return result
+                elif e == '--':
                     result.append(self._set_primitive_types(stack.pop()))
                 else:
                     result.append(self._set_primitive_types(e))
@@ -108,26 +110,44 @@ class JsonSerializer:
 
         elif re.fullmatch(DICT, obj):
             if re.match(TYPE, obj):
-                t = str(re.match(TYPE, obj).group(1))
-                if t in STRING_TYPES:
-                    return STRING_TYPES[t](self._set_primitive_types(re.search(SOURCE, obj).group(0)))
+                tipo = str(re.match(TYPE, obj).group(1))
+                if tipo in STRING_TYPES:
+                    return STRING_TYPES[tipo](self._set_primitive_types(re.search(SOURCE, obj).group(0)))
+                elif tipo == "function":
+                    return self._set_function(re.search(SOURCE, obj).group(0))
+
             else:
-                stack = [el for el in re.findall(LIST_DICT, obj[1:-1])]
+                stack = [elem for elem in re.findall(LIST_DICT, obj[1:-1])]
                 stack = stack[::-1]
-                s = '{' + re.sub(LIST_DICT, r'--', obj[1:-1]) + '}'
+                raw_str = '{' + re.sub(LIST_DICT, r'--', obj[1:-1]) + '}'
 
                 result = dict()
-                for k, v in zip(re.findall(KEY, s), re.findall(VALUE, s)):
-                    if v[1] == '--':
+                for k, v in zip(re.findall(KEY, raw_str), re.findall(VALUE, raw_str)):
+                    if v == '--':
                         result[self._set_primitive_types(k[1])] = self._set_primitive_types(stack.pop())
                     else:
-                        result[self._set_primitive_types(k[1])] = self._set_primitive_types(v[1])
+                        result[self._set_primitive_types(k[1])] = self._set_primitive_types(v)
 
                 return result
 
+    def _set_function(self, obj):
+        source = self._set_primitive_types(obj)
 
+        code_source = source["code"]
+        code = types.CodeType(*[code_source[p] for p in CODE_PROPERTIES])
+        globales = source["globals"]
+        name = source["name"]
+        defaults = source["defaults"]
+        clausura = source["closure"]
 
+        temp = dict()
+        for k, v in globales.items():
+            if re.match(r'module', k):
+                temp[v] = __import__(v)
+            else:
+                temp[k] = v
+        globales = temp
 
+        result = types.FunctionType(code, globales, name, defaults, clausura)
 
-
-
+        return result
