@@ -1,7 +1,16 @@
 import types
-from inspect import getmembers, isclass, ismethod, isfunction
+from inspect import getmembers, isclass, isfunction
 import regex as re
-from constants import *
+
+from constants import PRIMITIVE_COLLECTIONS, \
+                      PRIMITIVE_TYPES, \
+                      STRING_TYPES, \
+                      EXCLUDED_PARAMETERS, EXCLUDED_TYPES, \
+                      CODE_PROPERTIES, \
+                      BOOL, INT, FLOAT, COMPLEX, NONE, STRING, \
+                      LIST, DICT, LIST_DICT, \
+                      TYPE, SOURCE, \
+                      KEY, VALUE, LIST_ELEM
 
 class JsonSerializer:
     def dumps(self, obj):
@@ -49,24 +58,24 @@ class JsonSerializer:
         elif isinstance(obj, dict):
             return f'{{{", ".join(f"{self.dumps(k)}: {self.dumps(v)}" for k, v in obj.items())}}}'
 
-    def _get_function(self, obj, clausura=None):
+    def _get_function(self, obj):
         obj_name = obj.__class__.__name__
         code = self.dumps(obj.__code__)
-        globals_ = self._get_globals(obj, clausura)
+        globales = self._get_globals(obj)
         name = obj.__name__
         defaults = obj.__defaults__
         closure = obj.__closure__
 
         result = f'{{"type": {obj_name}, "source": {{' \
                  f'"code": {code}, ' \
-                 f'"globals": {globals_}, ' \
+                 f'"globals": {globales}, ' \
                  f'"name": {self.dumps(name)}, ' \
                  f'"defaults": {self.dumps(defaults)}, ' \
                  f'"closure": {self.dumps(closure)}}}}}'
 
         return result
 
-    def _get_globals(self, obj, clausura=None):
+    def _get_globals(self, obj):
         result = ''
 
         for element in obj.__code__.co_names:
@@ -74,9 +83,6 @@ class JsonSerializer:
                 if isinstance(obj.__globals__[element], types.ModuleType):
                     module = obj.__globals__[element].__name__
                     result += f'"module {module}": {self.dumps(module)}, '
-                # elif isclass(obj.__globals__[element]):
-                #     if clausura and obj.__globals__[element] != clausura or not clausura:
-                #         result += f'"{element}": {self.dumps(obj.__globals__[element])}, '
                 elif element != obj.__code__.co_name:
                     result += f'"{element}": {self.dumps(obj.__globals__[element])}, '
                 else:
@@ -98,10 +104,10 @@ class JsonSerializer:
             if key in EXCLUDED_PARAMETERS or type(member) in EXCLUDED_TYPES:
                 continue
 
-            if isinstance(obj_dict[key], (staticmethod, classmethod)) or ismethod(member):
-                source += f'"{key}": {self._get_function(member.__func__, obj)}, '
-            elif isfunction(key):
-                source += f'"{key}": {self._get_function(member, obj)}, '
+            if isinstance(obj_dict[key], (staticmethod, classmethod)):
+                source += f'"{key}": {self._get_function(member.__func__)}, '
+            elif isfunction(member):
+                source += f'"{key}": {self._get_function(member)}, '
             else:
                 source += f'"{key}": {self.dumps(member)}, '
 
@@ -219,7 +225,7 @@ class JsonSerializer:
         for k, v in members.items():
             if isfunction(v):
                 v.__globals__.update({result.__name__: result})
-            elif isinstance(v, (staticmethod, classmethod)) or ismethod(v):
+            elif isinstance(v, (staticmethod, classmethod)):
                 v.__func__.__globals__.update({result.__name__: result})
 
         return result
@@ -230,7 +236,7 @@ class JsonSerializer:
 
         members = dict()
         for k, v in obj["members"].items():
-            members[k] = self.dumps(v)
+            members[k] = v
 
         result = object.__new__(class_source)
         result.__dict__ = members
