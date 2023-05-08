@@ -1,5 +1,5 @@
 import types
-from inspect import getmembers
+from inspect import getmembers, isclass, ismethod, isfunction
 import regex as re
 from constants import *
 
@@ -13,6 +13,10 @@ class JsonSerializer:
             return f'{{"type": code, "source": {self.dumps({k: v for k, v in getmembers(obj) if k in CODE_PROPERTIES})}}}'
         elif isinstance(obj, types.CellType):
             return f'{{"type": cell, "source": {self.dumps(obj.cell_contents)}}}'
+        # if isinstance(obj, types.ModuleType):
+        #     return f'"module {obj.__name__}": {self.dumps(obj.__name__)}'
+        elif isclass(obj):
+            return self._get_class(obj)
         else:
             return self._get_object(obj)
 
@@ -45,10 +49,10 @@ class JsonSerializer:
         elif isinstance(obj, dict):
             return f'{{{", ".join(f"{self.dumps(k)}: {self.dumps(v)}" for k, v in obj.items())}}}'
 
-    def _get_function(self, obj):
+    def _get_function(self, obj, clausura=None):
         obj_name = obj.__class__.__name__
         code = self.dumps(obj.__code__)
-        globals_ = self._get_globals(obj)
+        globals_ = self._get_globals(obj, clausura)
         name = obj.__name__
         defaults = obj.__defaults__
         closure = obj.__closure__
@@ -62,15 +66,16 @@ class JsonSerializer:
 
         return result
 
-    def _get_globals(self, obj):
+    def _get_globals(self, obj, clausura=None):
         result = ''
 
         for element in obj.__code__.co_names:
             if element in obj.__globals__:
                 if isinstance(obj.__globals__[element], types.ModuleType):
-                    result += f'"module math": {self.dumps(obj.__globals__[element].__name__)}, '
+                    module = obj.__globals__[element].__name__
+                    result += f'"module {module}": {self.dumps(module)}, '
                 # elif isclass(obj.__globals__[element]):
-                #     if (clausura and obj.__globals__[element] != clausura) or (not clausura):
+                #     if clausura and obj.__globals__[element] != clausura or not clausura:
                 #         result += f'"{element}": {self.dumps(obj.__globals__[element])}, '
                 elif element != obj.__code__.co_name:
                     result += f'"{element}": {self.dumps(obj.__globals__[element])}, '
@@ -82,11 +87,35 @@ class JsonSerializer:
 
         return '{' + result + '}'
 
-    def _get_object(self, obj):
-        obj_name = obj.__class__.__name__
-        attributes = ", ".join(f'"{k}": {self._get_primitive_types(v)}' for k, v in vars(obj).items())
+    def _get_class(self, obj):
+        source = ''
+        source += f'"__name__": "{obj.__name__}", '
 
-        return f'{{"type": {obj_name}, "source": {{{attributes}}}}}'
+        obj_dict = obj.__dict__
+        for key in obj_dict:
+            member = obj_dict[key]
+
+            if key in EXCLUDED_PARAMETERS or type(member) in EXCLUDED_TYPES:
+                continue
+
+            if isinstance(obj_dict[key], (staticmethod, classmethod)) or ismethod(member):
+                source += f'"{key}": {self._get_function(member.__func__, obj)}, '
+            elif isfunction(key):
+                source += f'"{key}": {self._get_function(member, obj)}, '
+            else:
+                source += f'"{key}": {self.dumps(member)}, '
+
+        source += f'"__bases__": {self.dumps(tuple([base for base in obj.__bases__ if base != object]))}'
+
+        return f'{{"type": class, "source": {{{source}}}}}'
+
+    def _get_object(self, obj):
+        members = ", ".join(f'"{k}": {self._get_primitive_types(v)}' for k, v in vars(obj).items())
+        class_source = self.dumps(obj.__class__)
+
+        return f'{{"type": object, "source": ' \
+               f'{{"class": {class_source}, ' \
+               f'"members": {{{members}}}}}}}'
 
     def _set_primitive_types(self, obj):
         if re.fullmatch(BOOL, obj):
@@ -131,6 +160,10 @@ class JsonSerializer:
                 elif tipo == "cell":
                     cell = self._set_primitive_types(re.search(SOURCE, obj).group(0))
                     return types.CellType(cell)
+                elif tipo == "class":
+                    return self._set_class(re.search(SOURCE, obj).group(0))
+                elif tipo == "object":
+                    return self._set_object(re.search(SOURCE, obj).group(0))
             else:
                 stack = [elem for elem in re.findall(LIST_DICT, obj[1:-1])]
                 stack = stack[::-1]
@@ -170,5 +203,36 @@ class JsonSerializer:
         result = types.FunctionType(code, globales, name, defaults, clausura)
         # for recursion
         result.__globals__.update({result.__name__: result})
+
+        return result
+
+    def _set_class(self, obj):
+        obj = self._set_primitive_types(obj)
+        bases = obj["__bases__"]
+
+        members = dict()
+        for k, v in obj.items():
+            members[k] = v
+
+        result = type(obj["__name__"], bases, members)
+
+        for k, v in members.items():
+            if isfunction(v):
+                v.__globals__.update({result.__name__: result})
+            elif isinstance(v, (staticmethod, classmethod)) or ismethod(v):
+                v.__func__.__globals__.update({result.__name__: result})
+
+        return result
+
+    def _set_object(self, obj):
+        obj = self._set_primitive_types(obj)
+        class_source = obj["class"]
+
+        members = dict()
+        for k, v in obj["members"].items():
+            members[k] = self.dumps(v)
+
+        result = object.__new__(class_source)
+        result.__dict__ = members
 
         return result

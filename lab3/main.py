@@ -11,6 +11,10 @@ class Person:
         self.name = name
         self.age = age
 
+    @staticmethod
+    def koko(x):
+        return x * 2
+
 if __name__ == '__main__':
     a = [6, 9, "7658675", {89: 89, 69: 89}, [1, 2, 3]]
     b = (5, "pam")
@@ -149,3 +153,17 @@ if __name__ == '__main__':
     #
     # for element in new:
     #     print(element)
+
+    print(json_serializer.dumps(Person))
+    person = Person("Alex", 28)
+
+    fifi = json_serializer.dumps(person)
+    new_person = json_serializer.loads(fifi)
+    print(vars(new_person))
+
+    fifi = json_serializer.dumps(Person)
+    JJ = json_serializer.loads(fifi)
+    hh = JJ("56", 56)
+    print(vars(hh))
+
+    print(JJ.koko(2))

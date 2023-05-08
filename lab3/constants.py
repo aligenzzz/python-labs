@@ -1,9 +1,12 @@
+from types import WrapperDescriptorType, MethodDescriptorType, BuiltinFunctionType, GetSetDescriptorType, MappingProxyType
 
 PRIMITIVE_COLLECTIONS = (list, tuple, set, frozenset, bytes, bytearray)
 PRIMITIVE_TYPES = (bool, int, float, str, complex, *PRIMITIVE_COLLECTIONS, dict)
 
 STRING_TYPES = {"list": list, "tuple": tuple, "set": set, "frozenset": frozenset, "bytes": bytes, "bytearray": bytearray}
 
+EXCLUDED_PARAMETERS = ("__name__", "__base__", "__basicsize__", "__dictoffset__", "__class__")
+EXCLUDED_TYPES = (WrapperDescriptorType, MethodDescriptorType, BuiltinFunctionType, GetSetDescriptorType, MappingProxyType)
 CODE_PROPERTIES = ("co_argcount",         # number of arguments (not including keyword only arguments, * or **args)
                    "co_posonlyargcount",  #
                    "co_kwonlyargcount",   # number of keyword only arguments (not including ** arg)
