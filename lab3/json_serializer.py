@@ -9,17 +9,23 @@ class JsonSerializer:
             return self._get_primitive_types(obj)
         elif isinstance(obj, types.FunctionType):
             return self._get_function(obj)
+        elif isinstance(obj, types.CodeType):
+            return f'{{"type": code, "source": {self.dumps({k: v for k, v in getmembers(obj) if k in CODE_PROPERTIES})}}}'
+        elif isinstance(obj, types.CellType):
+            return f'{{"type": cell, "source": {self.dumps(obj.cell_contents)}}}'
         else:
             return self._get_object(obj)
 
     def dump(self, obj, file_name):
-        pass
+        with open(file_name, 'w') as file:
+            file.write(self.dumps(obj))
 
     def loads(self, str):
         return self._set_primitive_types(str)
 
     def load(self, file_name):
-        pass
+        with open(file_name, 'r') as file:
+            self.loads(file.read())
 
     def _get_primitive_types(self, obj):
         obj_name = obj.__class__.__name__
@@ -35,20 +41,20 @@ class JsonSerializer:
         elif isinstance(obj, complex):
             return f'{{"type": {obj_name}, "source": {obj}}}'
         elif isinstance(obj, PRIMITIVE_COLLECTIONS):
-            return f'{{"type": {obj_name}, "source": [{", ".join(self._get_primitive_types(o) for o in obj)}]}}'
+            return f'{{"type": {obj_name}, "source": [{", ".join(self.dumps(o) for o in obj)}]}}'
         elif isinstance(obj, dict):
-            return f'{{{", ".join(f"{self._get_primitive_types(k)}: {self._get_primitive_types(v)}" for k, v in obj.items())}}}'
+            return f'{{{", ".join(f"{self.dumps(k)}: {self.dumps(v)}" for k, v in obj.items())}}}'
 
     def _get_function(self, obj):
         obj_name = obj.__class__.__name__
-        code = {k: v for k, v in getmembers(obj.__code__) if k in CODE_PROPERTIES}
+        code = self.dumps(obj.__code__)
         globals_ = self._get_globals(obj)
         name = obj.__name__
         defaults = obj.__defaults__
         closure = obj.__closure__
 
         result = f'{{"type": {obj_name}, "source": {{' \
-                 f'"code": {self.dumps(code)}, ' \
+                 f'"code": {code}, ' \
                  f'"globals": {globals_}, ' \
                  f'"name": {self.dumps(name)}, ' \
                  f'"defaults": {self.dumps(defaults)}, ' \
@@ -56,13 +62,16 @@ class JsonSerializer:
 
         return result
 
-    def _get_globals(self, obj, clausura=None):
+    def _get_globals(self, obj):
         result = ''
 
         for element in obj.__code__.co_names:
             if element in obj.__globals__:
                 if isinstance(obj.__globals__[element], types.ModuleType):
                     result += f'"module math": {self.dumps(obj.__globals__[element].__name__)}, '
+                # elif isclass(obj.__globals__[element]):
+                #     if (clausura and obj.__globals__[element] != clausura) or (not clausura):
+                #         result += f'"{element}": {self.dumps(obj.__globals__[element])}, '
                 elif element != obj.__code__.co_name:
                     result += f'"{element}": {self.dumps(obj.__globals__[element])}, '
                 else:
@@ -114,8 +123,14 @@ class JsonSerializer:
                 if tipo in STRING_TYPES:
                     return STRING_TYPES[tipo](self._set_primitive_types(re.search(SOURCE, obj).group(0)))
                 elif tipo == "function":
-                    return self._set_function(re.search(SOURCE, obj).group(0))
-
+                    function = self._set_function(re.search(SOURCE, obj).group(0))
+                    return function
+                elif tipo == "code":
+                    code = self._set_primitive_types(re.search(SOURCE, obj).group(0))
+                    return types.CodeType(*[code[p] for p in CODE_PROPERTIES])
+                elif tipo == "cell":
+                    cell = self._set_primitive_types(re.search(SOURCE, obj).group(0))
+                    return types.CellType(cell)
             else:
                 stack = [elem for elem in re.findall(LIST_DICT, obj[1:-1])]
                 stack = stack[::-1]
@@ -133,8 +148,7 @@ class JsonSerializer:
     def _set_function(self, obj):
         source = self._set_primitive_types(obj)
 
-        code_source = source["code"]
-        code = types.CodeType(*[code_source[p] for p in CODE_PROPERTIES])
+        code = source["code"]
         globales = source["globals"]
         name = source["name"]
         defaults = source["defaults"]
@@ -146,8 +160,15 @@ class JsonSerializer:
                 temp[v] = __import__(v)
             else:
                 temp[k] = v
+
+        # prior to version 3.10, for some reason, he does not import the following built-in modules
+        temp['__builtins__'] = __import__('builtins')
+        temp['sys'] = __import__('sys')
+
         globales = temp
 
         result = types.FunctionType(code, globales, name, defaults, clausura)
+        # for recursion
+        result.__globals__.update({result.__name__: result})
 
         return result
