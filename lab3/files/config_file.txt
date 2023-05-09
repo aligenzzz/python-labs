@@ -1,6 +1,0 @@
-{
-  "file_from": "files/json_format.json",
-  "file_to": "files/xml_format.xml",
-  "format_from": "json",
-  "format_to": "xml"
-}

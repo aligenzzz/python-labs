@@ -172,7 +172,6 @@ class XmlSerializer:
                     return function
                 elif tipo == "code":
                     code = self._set_primitive_types(re.search(SOURCE_X, obj).group(1))
-                    print(code)
                     return types.CodeType(*[code[p] for p in CODE_PROPERTIES])
                 elif tipo == "cell":
                     cell = self._set_primitive_types(re.search(SOURCE_X, obj).group(1))
