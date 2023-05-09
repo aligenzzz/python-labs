@@ -162,6 +162,7 @@ class JsonSerializer:
                     return function
                 elif tipo == "code":
                     code = self._set_primitive_types(re.search(SOURCE_J, obj).group(0))
+                    print(code)
                     return types.CodeType(*[code[p] for p in CODE_PROPERTIES])
                 elif tipo == "cell":
                     cell = self._set_primitive_types(re.search(SOURCE_J, obj).group(0))

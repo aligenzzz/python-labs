@@ -35,6 +35,11 @@ class XmlSerializer:
             file.write(self.dumps(obj))
 
     def loads(self, str):
+        str = re.sub(r'<list>', '[', str)
+        str = re.sub(r'</list>', ']', str)
+        str = re.sub(r'<dict>', '{', str)
+        str = re.sub(r'</dict>', '}', str)
+
         return self._set_primitive_types(str)
 
     def load(self, file_name):
@@ -53,7 +58,7 @@ class XmlSerializer:
         elif isinstance(obj, dict):
             return f'<dict>{"".join(f"<key>{self.dumps(k)}</key><value>{self.dumps(v)}</value>" for k, v in obj.items())}</dict>'
         elif isinstance(obj, PRIMITIVE_COLLECTIONS):
-            return f'<dict><key>{self.dumps("type")}</key><value>{self.dumps(str(obj_name))}</value>' \
+            return f'<dict><key>{self.dumps("type")}</key><value>{obj_name}</value>' \
                    f'<key>{self.dumps("source")}</key><value><list>{"".join(self.dumps(o) for o in obj)}</list></value></dict>'
 
     def _get_function(self, obj):
@@ -101,11 +106,11 @@ class XmlSerializer:
                 continue
 
             if isinstance(obj_dict[key], (staticmethod, classmethod)):
-                source += f'<key>{self.dumps(str(key))}</key><value>{self._get_function(member.__func__)}</value>'
+                source += f'<key>{self.dumps(key)}</key><value>{self._get_function(member.__func__)}</value>'
             elif isfunction(member):
-                source += f'<key>{self.dumps(str(key))}</key><value>{self._get_function(member)}</value>'
+                source += f'<key>{self.dumps(key)}</key><value>{self._get_function(member)}</value>'
             else:
-                source += f'<key>{self.dumps(str(key))}</key><value>{self.dumps(member)}</value>'
+                source += f'<key>{self.dumps(key)}</key><value>{self.dumps(member)}</value>'
 
         source += f'<key>{self.dumps("__bases__")}</key>' \
                   f'<value>{self.dumps(tuple([base for base in obj.__bases__ if base != object]))}</value>'
@@ -124,8 +129,6 @@ class XmlSerializer:
                f'</value></dict></value></dict>'
 
     def _set_primitive_types(self, obj):
-        obj = re.sub(r'\s', '', obj)
-
         if re.match(BOOL_X, obj):
             value = re.match(BOOL_X, obj)[1]
             return bool(value)
@@ -143,11 +146,10 @@ class XmlSerializer:
             return str(value)
         elif re.match(NONE_X, obj):
             return None
-        elif re.fullmatch(LIST_X, obj):
-            obj = re.sub(r'\s', '', obj)
-            stack = [el for el in re.findall(LIST_DICT_X, obj[6:-7])]
+        elif re.match(LIST_X, obj):
+            stack = [el for el in re.findall(LIST_DICT_X, obj[1:-1])]
             stack = stack[::-1]
-            raw_str = re.sub(LIST_DICT_X, r'<s>--</s>', obj[6:-7])
+            raw_str = '[' + re.sub(LIST_DICT_X, r'<s>--</s>', obj[1:-1]) + ']'
 
             result = list()
             for e in re.findall(LIST_ELEM_X, raw_str):
@@ -160,7 +162,7 @@ class XmlSerializer:
 
             return result
 
-        elif re.fullmatch(DICT_X, obj):
+        elif re.match(DICT_X, obj):
             if re.match(TYPE_X, obj):
                 tipo = str(re.match(TYPE_X, obj).group(1))
                 if tipo in STRING_TYPES:
@@ -170,6 +172,7 @@ class XmlSerializer:
                     return function
                 elif tipo == "code":
                     code = self._set_primitive_types(re.search(SOURCE_X, obj).group(1))
+                    print(code)
                     return types.CodeType(*[code[p] for p in CODE_PROPERTIES])
                 elif tipo == "cell":
                     cell = self._set_primitive_types(re.search(SOURCE_X, obj).group(1))
@@ -179,10 +182,9 @@ class XmlSerializer:
                 elif tipo == "object":
                     return self._set_object(re.search(SOURCE_X, obj).group(1))
             else:
-                obj = re.sub(r'\s', '', obj)
-                stack = [el for el in re.findall(LIST_DICT_X, obj[6:-7])]
+                stack = [el for el in re.findall(LIST_DICT_X, obj[1:-1])]
                 stack = stack[::-1]
-                raw_str = re.sub(LIST_DICT_X, r'<s>--</s>', obj[6:-7])
+                raw_str = '{' + re.sub(LIST_DICT_X, r'<s>--</s>', obj[1:-1]) + '}'
 
                 result = dict()
                 for k, v in zip(re.findall(KEY_X, raw_str), re.findall(VALUE_X, raw_str)):

@@ -7,6 +7,7 @@ STRING_TYPES = {"list": list, "tuple": tuple, "set": set, "frozenset": frozenset
 
 EXCLUDED_PARAMETERS = ("__name__", "__base__", "__basicsize__", "__dictoffset__", "__class__")
 EXCLUDED_TYPES = (WrapperDescriptorType, MethodDescriptorType, BuiltinFunctionType, GetSetDescriptorType, MappingProxyType)
+
 CODE_PROPERTIES = ("co_argcount",         # number of arguments (not including keyword only arguments, * or **args)
                    "co_posonlyargcount",  #
                    "co_kwonlyargcount",   # number of keyword only arguments (not including ** arg)
@@ -24,7 +25,9 @@ CODE_PROPERTIES = ("co_argcount",         # number of arguments (not including k
                    "co_freevars",         # tuple of names of free variables (referenced via a function's closure)
                    "co_cellvars")         # tuple of names of cell variables (referenced by containing scopes)
 
-# regex expressions
+
+# --------------------------------------regex expressions------------------------------------------------------
+
 # for json format
 BOOL_J = r'true|false'
 INT_J = r'[+-]?\d+'
@@ -52,14 +55,13 @@ STRING_X = r'<str>(.+)<\/str>'
 NONE_X = r'<NoneType>(.+)<\/NoneType>'
 COMPLEX_X = r'<complex>(.+)<\/complex>'
 
-LIST_X = r'<list>[\s.<\w\/>]+<\/list>'
-DICT_X = r'<dict>[\s.<\w\/>]+<\/dict>'
-LIST_DICT_X = f'{LIST_X}|{DICT_X}'
+LIST_X = LIST_J
+DICT_X = DICT_J
+LIST_DICT_X = LIST_DICT_J
 
-TYPE_X = r'(?:<dict>\s*<key>\s*<str>type<\/str>\s*<\/key>\s*<value>\s*)(.+)(?=<\/value>)'
-SOURCE_X = r'(?:<key>\s*<str>source<\/str>\s*<\/key>\s*<value>\s]*)' \
-           r'([\s.<\w\/>]+)(?=<\/value>)'
+TYPE_X = r'(?:{<key><str>type<\/str><\/key><value>)(\w+)(?=<\/value>)'
+SOURCE_X = r'(?<=source<\/str><\/key><value>)([{}\[\]\s.<\w\/>:\\-]+)(?=<\/value>)'
 
-KEY_X = r'(?<=<key>)\s*(<\w+>[\s.<\w\/>]*?<\/\w+>)\s*(?=<\/key)'
-VALUE_X = r'(?<=<value>)\s*(<\w+>[\s.<\w\/>]*?<\/\w+>)\s*(?=<\/value)'
-LIST_ELEM_X = r'(<\w+>[\s.<\w\/>-]*?<\/\w+>)'
+KEY_X = r'(?<=<key>)\s*(<\w+>[{}\[\]\s.<\w\/>]*?<\/\w+>)\s*(?=<\/key)'
+VALUE_X = r'(?<=<value>)\s*(<\w+>[:\\{}\[\]\s.<\w\/>-]*?<\/\w+>)\s*(?=<\/value)'
+LIST_ELEM_X = r'(<\w+>[{}\[\]\s.<\w\/>-]*?<\/\w+>)'

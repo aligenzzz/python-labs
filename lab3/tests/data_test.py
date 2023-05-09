@@ -38,7 +38,7 @@ def generator(x):
 
 def simple_decorator(func):
     def wrapper(*args):
-        print(f"Function {func.__name__} is called with arguments: {args}")
+        print(f"arguments{args}")
         return func(*args)
 
     return wrapper
