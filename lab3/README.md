@@ -1,7 +1,7 @@
 # JSON/XML Serialization
 ## Installation
 ```
-pip install py-serializer
+pip install py-serializer-100523
 ```
 ## Get started!
 How to create JSON or XML serializer:

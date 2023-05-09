@@ -13,7 +13,7 @@ with open(path.join(HERE, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name="py-serializer",
+    name="py-serializer-100523",
     version="0.1.0",
     description="Demo library",
     long_description=long_description,
