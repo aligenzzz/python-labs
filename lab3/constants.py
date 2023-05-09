@@ -25,21 +25,41 @@ CODE_PROPERTIES = ("co_argcount",         # number of arguments (not including k
                    "co_cellvars")         # tuple of names of cell variables (referenced by containing scopes)
 
 # regex expressions
-BOOL = r'true|false'
-INT = r'[+-]?\d+'
-FLOAT = r'[+-]?[\d.]+'
-COMPLEX = r'(?<=\()[\d.+-j]+(?=\))'
-NONE = r'null'
-STRING = r'".+"'
+# for json format
+BOOL_J = r'true|false'
+INT_J = r'[+-]?\d+'
+FLOAT_J = r'[+-]?[\d.]+'
+COMPLEX_J = r'(?<=\()[\d.+-j]+(?=\))'
+NONE_J = r'null'
+STRING_J = r'".+"'
 
-LIST = r'\[(?:[^\[\]]*|(?R))*\]'
-DICT = r'{(?:[^{}]*|(?R))*}'
-LIST_DICT = f'{LIST}|{DICT}'
+LIST_J = r'\[(?:[^\[\]]*|(?R))*\]'
+DICT_J = r'{(?:[^{}]*|(?R))*}'
+LIST_DICT_J = f'{LIST_J}|{DICT_J}'
 
-TYPE = r'^(?:{"type": )(\w+)(?=,)'
-SOURCE = r'(?<="source": )(.+)(?=})'
+TYPE_J = r'^(?:{"type": )(\w+)(?=,)'
+SOURCE_J = r'(?<="source": )(.+)(?=})'
 
-KEY = r'((?<=, )|(?<={))(.*?)(?=:)'
-VALUE = r'(?<=:\s)(.*?)(?=[,}])'
+KEY_J = r'((?<=, )|(?<={))(.*?)(?=:)'
+VALUE_J = r'(?<=:\s)(.*?)(?=[,}])'
+LIST_ELEM_J = r'(?<=[\[ ])(.*?)(?=[,\]])'
 
-LIST_ELEM = r'(?<=[\[ ])(.*?)(?=[,\]])'
+# for xml format
+BOOL_X = r'<bool>(.+)<\/bool>'
+INT_X = r'<int>(.+)<\/int>'
+FLOAT_X = r'<float>(.+)<\/float>'
+STRING_X = r'<str>(.+)<\/str>'
+NONE_X = r'<NoneType>(.+)<\/NoneType>'
+COMPLEX_X = r'<complex>(.+)<\/complex>'
+
+LIST_X = r'<list>[\s.<\w\/>]+<\/list>'
+DICT_X = r'<dict>[\s.<\w\/>]+<\/dict>'
+LIST_DICT_X = f'{LIST_X}|{DICT_X}'
+
+TYPE_X = r'(?:<dict>\s*<key>\s*<str>type<\/str>\s*<\/key>\s*<value>\s*)(.+)(?=<\/value>)'
+SOURCE_X = r'(?:<key>\s*<str>source<\/str>\s*<\/key>\s*<value>\s]*)' \
+           r'([\s.<\w\/>]+)(?=<\/value>)'
+
+KEY_X = r'(?<=<key>)\s*(<\w+>[\s.<\w\/>]*?<\/\w+>)\s*(?=<\/key)'
+VALUE_X = r'(?<=<value>)\s*(<\w+>[\s.<\w\/>]*?<\/\w+>)\s*(?=<\/value)'
+LIST_ELEM_X = r'(<\w+>[\s.<\w\/>-]*?<\/\w+>)'

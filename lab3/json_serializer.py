@@ -7,10 +7,10 @@ from constants import PRIMITIVE_COLLECTIONS, \
                       STRING_TYPES, \
                       EXCLUDED_PARAMETERS, EXCLUDED_TYPES, \
                       CODE_PROPERTIES, \
-                      BOOL, INT, FLOAT, COMPLEX, NONE, STRING, \
-                      LIST, DICT, LIST_DICT, \
-                      TYPE, SOURCE, \
-                      KEY, VALUE, LIST_ELEM
+                      BOOL_J, INT_J, FLOAT_J, COMPLEX_J, NONE_J, STRING_J, \
+                      LIST_J, DICT_J, LIST_DICT_J, \
+                      TYPE_J, SOURCE_J, \
+                      KEY_J, VALUE_J, LIST_ELEM_J
 
 class JsonSerializer:
     def dumps(self, obj):
@@ -124,25 +124,25 @@ class JsonSerializer:
                f'"members": {{{members}}}}}}}'
 
     def _set_primitive_types(self, obj):
-        if re.fullmatch(BOOL, obj):
+        if re.fullmatch(BOOL_J, obj):
             return bool(obj)
-        elif re.fullmatch(INT, obj):
+        elif re.fullmatch(INT_J, obj):
             return int(obj)
-        elif re.fullmatch(FLOAT, obj):
+        elif re.fullmatch(FLOAT_J, obj):
             return float(obj)
-        elif re.fullmatch(COMPLEX, obj):
+        elif re.fullmatch(COMPLEX_J, obj):
             return complex(obj)
-        elif re.fullmatch(STRING, obj):
+        elif re.fullmatch(STRING_J, obj):
             return str(obj[1:-1])
-        elif re.fullmatch(NONE, obj):
+        elif re.fullmatch(NONE_J, obj):
             return None
-        elif re.fullmatch(LIST, obj):
-            stack = [el for el in re.findall(LIST_DICT, obj[1:-1])]
+        elif re.fullmatch(LIST_J, obj):
+            stack = [el for el in re.findall(LIST_DICT_J, obj[1:-1])]
             stack = stack[::-1]
-            raw_str = '[' + re.sub(LIST_DICT, r'--', obj[1:-1]) + ']'
+            raw_str = '[' + re.sub(LIST_DICT_J, r'--', obj[1:-1]) + ']'
 
             result = list()
-            for e in re.findall(LIST_ELEM, raw_str):
+            for e in re.findall(LIST_ELEM_J, raw_str):
                 if e == '':
                     return result
                 elif e == '--':
@@ -152,31 +152,31 @@ class JsonSerializer:
 
             return result
 
-        elif re.fullmatch(DICT, obj):
-            if re.match(TYPE, obj):
-                tipo = str(re.match(TYPE, obj).group(1))
+        elif re.fullmatch(DICT_J, obj):
+            if re.match(TYPE_J, obj):
+                tipo = str(re.match(TYPE_J, obj).group(1))
                 if tipo in STRING_TYPES:
-                    return STRING_TYPES[tipo](self._set_primitive_types(re.search(SOURCE, obj).group(0)))
+                    return STRING_TYPES[tipo](self._set_primitive_types(re.search(SOURCE_J, obj).group(0)))
                 elif tipo == "function":
-                    function = self._set_function(re.search(SOURCE, obj).group(0))
+                    function = self._set_function(re.search(SOURCE_J, obj).group(0))
                     return function
                 elif tipo == "code":
-                    code = self._set_primitive_types(re.search(SOURCE, obj).group(0))
+                    code = self._set_primitive_types(re.search(SOURCE_J, obj).group(0))
                     return types.CodeType(*[code[p] for p in CODE_PROPERTIES])
                 elif tipo == "cell":
-                    cell = self._set_primitive_types(re.search(SOURCE, obj).group(0))
+                    cell = self._set_primitive_types(re.search(SOURCE_J, obj).group(0))
                     return types.CellType(cell)
                 elif tipo == "class":
-                    return self._set_class(re.search(SOURCE, obj).group(0))
+                    return self._set_class(re.search(SOURCE_J, obj).group(0))
                 elif tipo == "object":
-                    return self._set_object(re.search(SOURCE, obj).group(0))
+                    return self._set_object(re.search(SOURCE_J, obj).group(0))
             else:
-                stack = [elem for elem in re.findall(LIST_DICT, obj[1:-1])]
+                stack = [elem for elem in re.findall(LIST_DICT_J, obj[1:-1])]
                 stack = stack[::-1]
-                raw_str = '{' + re.sub(LIST_DICT, r'--', obj[1:-1]) + '}'
+                raw_str = '{' + re.sub(LIST_DICT_J, r'--', obj[1:-1]) + '}'
 
                 result = dict()
-                for k, v in zip(re.findall(KEY, raw_str), re.findall(VALUE, raw_str)):
+                for k, v in zip(re.findall(KEY_J, raw_str), re.findall(VALUE_J, raw_str)):
                     if v == '--':
                         result[self._set_primitive_types(k[1])] = self._set_primitive_types(stack.pop())
                     else:
