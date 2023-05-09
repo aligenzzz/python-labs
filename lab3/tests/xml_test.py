@@ -1,6 +1,6 @@
 import unittest
 
-from xml_serializer import XmlSerializer
+from serializer import Serializer
 from data_test import primitive, \
                       simple_function, \
                       recursive_function, \
@@ -9,11 +9,10 @@ from data_test import primitive, \
                       generator, \
                       simple_decorator, \
                       my_func, \
-                      Person, \
+                      Person, person, \
                       A, B
 
-xml_serializer = XmlSerializer()
-person = Person("Alex", 26)
+xml_serializer = Serializer.create_serializer("xml")
 
 class MyTestCase(unittest.TestCase):
     def test_primitive_types_serialization(self):

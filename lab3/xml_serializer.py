@@ -44,7 +44,7 @@ class XmlSerializer:
 
     def load(self, file_name):
         with open(file_name, 'r') as file:
-            self.loads(file.read())
+            return self.loads(file.read())
 
     def _get_primitive_types(self, obj):
         obj_name = obj.__class__.__name__

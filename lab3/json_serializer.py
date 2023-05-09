@@ -1,6 +1,7 @@
 import types
 from inspect import getmembers, isclass, isfunction
 import regex as re
+from xml_serializer import XmlSerializer
 
 from constants import PRIMITIVE_COLLECTIONS, \
                       PRIMITIVE_TYPES, \
@@ -36,9 +37,9 @@ class JsonSerializer:
     def loads(self, str):
         return self._set_primitive_types(str)
 
-    def load(self, file_name):
+    def load(self, file_name, formato='json'):
         with open(file_name, 'r') as file:
-            self.loads(file.read())
+            return self.loads(file.read())
 
     def _get_primitive_types(self, obj):
         obj_name = obj.__class__.__name__

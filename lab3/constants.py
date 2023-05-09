@@ -9,7 +9,7 @@ EXCLUDED_PARAMETERS = ("__name__", "__base__", "__basicsize__", "__dictoffset__"
 EXCLUDED_TYPES = (WrapperDescriptorType, MethodDescriptorType, BuiltinFunctionType, GetSetDescriptorType, MappingProxyType)
 
 CODE_PROPERTIES = ("co_argcount",         # number of arguments (not including keyword only arguments, * or **args)
-                   "co_posonlyargcount",  #
+                   "co_posonlyargcount",  # number of positional-only arguments
                    "co_kwonlyargcount",   # number of keyword only arguments (not including ** arg)
                    "co_nlocals",          # number of local variables
                    "co_stacksize",        # virtual machine stack space required
