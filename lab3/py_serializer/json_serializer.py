@@ -2,15 +2,15 @@ import types
 from inspect import getmembers, isclass, isfunction
 import regex as re
 
-from constants import PRIMITIVE_COLLECTIONS, \
-                      PRIMITIVE_TYPES, \
-                      STRING_TYPES, \
-                      EXCLUDED_PARAMETERS, EXCLUDED_TYPES, \
-                      CODE_PROPERTIES, \
-                      BOOL_J, INT_J, FLOAT_J, COMPLEX_J, NONE_J, STRING_J, \
-                      LIST_J, DICT_J, LIST_DICT_J, \
-                      TYPE_J, SOURCE_J, \
-                      KEY_J, VALUE_J, LIST_ELEM_J
+from py_serializer.constants import PRIMITIVE_COLLECTIONS, \
+                                    PRIMITIVE_TYPES, \
+                                    STRING_TYPES, \
+                                    EXCLUDED_PARAMETERS, EXCLUDED_TYPES, \
+                                    CODE_PROPERTIES, \
+                                    BOOL_J, INT_J, FLOAT_J, COMPLEX_J, NONE_J, STRING_J, \
+                                    LIST_J, DICT_J, LIST_DICT_J, \
+                                    TYPE_J, SOURCE_J, \
+                                    KEY_J, VALUE_J, LIST_ELEM_J
 
 class JsonSerializer:
     def dumps(self, obj):

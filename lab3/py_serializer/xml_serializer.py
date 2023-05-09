@@ -2,15 +2,15 @@ import types
 from inspect import getmembers, isclass, isfunction
 import regex as re
 
-from constants import PRIMITIVE_COLLECTIONS, \
-                      PRIMITIVE_TYPES, \
-                      STRING_TYPES, \
-                      EXCLUDED_PARAMETERS, EXCLUDED_TYPES, \
-                      CODE_PROPERTIES, \
-                      BOOL_X, INT_X, FLOAT_X, COMPLEX_X, NONE_X, STRING_X, \
-                      LIST_X, DICT_X, LIST_DICT_X, \
-                      TYPE_X, SOURCE_X, \
-                      KEY_X, VALUE_X, LIST_ELEM_X
+from py_serializer.constants import PRIMITIVE_COLLECTIONS, \
+                                    PRIMITIVE_TYPES, \
+                                    STRING_TYPES, \
+                                    EXCLUDED_PARAMETERS, EXCLUDED_TYPES, \
+                                    CODE_PROPERTIES, \
+                                    BOOL_X, INT_X, FLOAT_X, COMPLEX_X, NONE_X, STRING_X, \
+                                    LIST_X, DICT_X, LIST_DICT_X, \
+                                    TYPE_X, SOURCE_X, \
+                                    KEY_X, VALUE_X, LIST_ELEM_X
 
 class XmlSerializer:
     def dumps(self, obj):
