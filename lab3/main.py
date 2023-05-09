@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from serializer import Serializer
+from py_serializer.serializer import Serializer
 
 if __name__ == '__main__':
     parser = ArgumentParser(description="Serializer JSON, XML")

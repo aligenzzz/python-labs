@@ -1,6 +1,6 @@
 import unittest
 
-from serializer import Serializer
+from py_serializer.serializer import Serializer
 from data_test import primitive, \
                       simple_function, \
                       recursive_function, \

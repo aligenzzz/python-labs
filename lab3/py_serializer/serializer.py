@@ -1,5 +1,5 @@
-from json_serializer import JsonSerializer
-from xml_serializer import XmlSerializer
+from py_serializer.json_serializer import JsonSerializer
+from py_serializer.xml_serializer import XmlSerializer
 
 
 class Serializer:
