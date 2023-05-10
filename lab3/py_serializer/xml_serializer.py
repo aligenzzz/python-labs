@@ -107,6 +107,15 @@ class XmlSerializer:
 
             if isinstance(obj_dict[key], (staticmethod, classmethod)):
                 source += f'<key>{self.dumps(key)}</key><value>{self._get_function(member.__func__)}</value>'
+            elif isinstance(obj_dict[key], property):
+                value = dict()
+                value["fget"] = member.fget
+                value["fset"] = member.fset
+                value["fdel"] = member.fdel
+                value["doc"] = member.__doc__
+                source += f'<key>{self.dumps(key)}</key><value><dict>' \
+                          f'<key>{self.dumps("type")}</key><value>property</value>' \
+                          f'<key>{self.dumps("source")}</key><value>{self.dumps(value)}</value></dict></value>'
             elif isfunction(member):
                 source += f'<key>{self.dumps(key)}</key><value>{self._get_function(member)}</value>'
             else:
@@ -180,6 +189,9 @@ class XmlSerializer:
                     return self._set_class(re.search(SOURCE_X, obj).group(1))
                 elif tipo == "object":
                     return self._set_object(re.search(SOURCE_X, obj).group(1))
+                elif tipo == "property":
+                    value = self.loads(re.search(SOURCE_X, obj).group(1))
+                    return property(fget=value["fget"], fset=value["fset"], fdel=value["fdel"], doc=value["doc"])
             else:
                 stack = [el for el in re.findall(LIST_DICT_X, obj[1:-1])]
                 stack = stack[::-1]

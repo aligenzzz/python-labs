@@ -106,6 +106,13 @@ class JsonSerializer:
 
             if isinstance(obj_dict[key], (staticmethod, classmethod)):
                 source += f'"{key}": {self._get_function(member.__func__)}, '
+            elif isinstance(obj_dict[key], property):
+                value = dict()
+                value["fget"] = member.fget
+                value["fset"] = member.fset
+                value["fdel"] = member.fdel
+                value["doc"] = member.__doc__
+                source += f'"{key}": {{"type": property, "source": {self.dumps(value)}}}, '
             elif isfunction(member):
                 source += f'"{key}": {self._get_function(member)}, '
             else:
@@ -170,6 +177,9 @@ class JsonSerializer:
                     return self._set_class(re.search(SOURCE_J, obj).group(0))
                 elif tipo == "object":
                     return self._set_object(re.search(SOURCE_J, obj).group(0))
+                elif tipo == "property":
+                    value = self.loads(re.search(SOURCE_J, obj).group(0))
+                    return property(fget=value["fget"], fset=value["fset"], fdel=value["fdel"], doc=value["doc"])
             else:
                 stack = [elem for elem in re.findall(LIST_DICT_J, obj[1:-1])]
                 stack = stack[::-1]
