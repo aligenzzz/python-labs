@@ -5,11 +5,12 @@ class InteractiveContainer:
     def __init__(self, username):
         self.username = username
         self.data = {}
+        self.loaded = False
 
     def add(self, *args):
         if self.username not in self.data:
             self.load()
-            self.data[self.username] = args
+            self.data[self.username] = list(args)
         else:
             for element in args:
                 if element not in self.data[self.username]:
@@ -51,12 +52,13 @@ class InteractiveContainer:
 
     def save(self):
         # for concatenation
-        temp_data = self.data
-        with open('text_files/data.json', 'r') as file:
-            self.data = load(file)
-        if self.username in temp_data and self.username in self.data:
-            if temp_data[self.username] != self.data[self.username]:
-                self.add(*temp_data[self.username])
+        if not self.loaded:
+            temp_data = self.data
+            with open('text_files/data.json', 'r') as file:
+                self.data = load(file)
+            if self.username in temp_data and self.username in self.data:
+                if temp_data[self.username] != self.data[self.username]:
+                    self.add(*temp_data[self.username])
 
         if self.username not in self.data:
             self.data[self.username] = []
@@ -64,6 +66,7 @@ class InteractiveContainer:
             dump(self.data, file)
 
     def load(self):
+        self.loaded = True
         temp_data = self.data
         with open('text_files/data.json', 'r') as file:
             self.data = load(file)
