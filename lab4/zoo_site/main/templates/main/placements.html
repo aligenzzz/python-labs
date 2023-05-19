@@ -1,0 +1,22 @@
+{% extends 'main/index.html' %}
+
+{% block title %}All placements{% endblock %}
+
+{% block content %}
+  <h1>All placements</h1>
+
+    {% if placement_list %}
+    <ul>
+
+      {% for placement in placement_list %}
+      <li>
+        <a href="/main/placements/{{ placement.id }}">{{ placement }}</a>
+      </li>
+      {% endfor %}
+
+    </ul>
+    {% else %}
+      <p>There are no placements in the zoo.</p>
+    {% endif %}
+
+{% endblock %}

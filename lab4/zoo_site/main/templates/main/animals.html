@@ -1,0 +1,22 @@
+{% extends 'main/index.html' %}
+
+{% block title %}All animals{% endblock %}
+
+{% block content %}
+  <h1>All animals</h1>
+
+    {% if animal_list %}
+    <ul>
+
+      {% for animal in animal_list %}
+      <li>
+        <a href="/main/animals/{{ animal.id }}">{{ animal.name }}</a>
+        <img src="{{ animal.image }}" alt="Such image doesn't exist :(" style="max-width: 150px;">
+      </li>
+      {% endfor %}
+
+    </ul>
+    {% else %}
+      <p>There are no animals in the zoo.</p>
+    {% endif %}
+{% endblock %}

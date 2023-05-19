@@ -67,8 +67,7 @@ class Placement(models.Model):
         verbose_name_plural = "Placements"
 
     def __str__(self):
-        pass
-
+        return f'{self.name} {self.number}'
 
 class Staffer(models.Model):
     phone_regex = RegexValidator(
@@ -85,7 +84,7 @@ class Staffer(models.Model):
         verbose_name_plural = "Staff"
 
     def __str__(self):
-        pass
+        return f'{self.post} {self.name}'
 
 
 class Animal(models.Model):
@@ -98,7 +97,7 @@ class Animal(models.Model):
     fodder = models.ForeignKey(Fodder, on_delete=models.SET_NULL, null=True)
     admission_date = models.DateField(null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
-    image = models.ImageField()
+    image = models.URLField(default='')
     info = models.TextField()
     daily_feed = models.FloatField()
 
