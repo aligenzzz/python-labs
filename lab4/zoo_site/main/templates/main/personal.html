@@ -1,0 +1,14 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Personal Account{% endblock %}
+
+{% block content %}
+  <h1>Hello, {{ user.username }}!</h1>
+    <ul>
+        <li><a href="/main/personal/profile/">My Profile</a></li>
+        <li><a href="/main/personal/animals/">View Animals</a></li>
+        <li><a href="/main/personal/placements/">View Placements</a></li>
+        <li><a href="/main/personal/settings/">Settings</a></li>
+        <li><a href="/main/accounts/logout/">Log out</a></li>
+    </ul>
+{% endblock %}

@@ -78,6 +78,7 @@ class Staffer(models.Model):
     name = models.CharField(max_length=30)
     post = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True)
     phone_number = models.CharField(max_length=20, validators=[phone_regex], default='+375 (29) XXX-XX-XX')
+    username = models.CharField(max_length=30, default='')
 
     class Meta:
         verbose_name = "Staffer"

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
 from .models import Animal, Placement, Staffer
-from django.http import Http404
+from django.http import Http404, HttpResponse
 import requests
 from django.views import View
 
@@ -114,4 +114,49 @@ class StafferPlacementsView(generic.ListView):
         id = self.kwargs['id']
         staffer = Staffer.objects.get(id=id)
         return Placement.objects.filter(animals__in=staffer.animals.all()).distinct()
+
+class PersonalAccountView(View):
+    @staticmethod
+    def get(request):
+        return render(
+            request,
+            'main/personal.html',
+        )
+
+class UserProfileView(View):
+    @staticmethod
+    def get(request):
+        try:
+            staffer = Staffer.objects.get(username=request.user.username)
+        except Staffer.DoesNotExist:
+            raise Http404("Staffer doesn't exist :(")
+
+        return render(
+            request,
+            'main/staffer_detail.html',
+            context={'staffer': staffer, }
+        )
+
+class UserAnimalsView(generic.ListView):
+    model = Animal
+    context_object_name = 'animal_list'
+    template_name = 'main/animals.html'
+
+    def get_queryset(self):
+        staffer = Staffer.objects.get(username=self.request.user.username)
+        return Animal.objects.filter(staffer=staffer)
+
+class UserPlacementsView(generic.ListView):
+    model = Placement
+    context_object_name = 'placement_list'
+    template_name = 'main/placements.html'
+
+    def get_queryset(self):
+        staffer = Staffer.objects.get(username=self.request.user.username)
+        return Placement.objects.filter(animals__in=staffer.animals.all()).distinct()
+
+class UserSettingsView(View):
+    @staticmethod
+    def get(request):
+        return HttpResponse("SETTINGS")
 

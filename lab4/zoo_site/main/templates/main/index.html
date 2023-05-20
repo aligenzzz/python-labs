@@ -13,8 +13,16 @@
             <li><a href="/main/">Home</a></li>
             <li><a href="/main/animals/">All animals</a></li>
             <li><a href="/main/placements/">All placements</a></li>
-            <li><a href="/main/staff/">All staff</a> </li>
-            <li><a href="">Personal Account</a></li>
+            <li><a href="/main/staff/">All staff</a></li>
+            {% if user.is_authenticated %}
+                {% if user.is_superuser %}
+                    <li><a href="/admin/">Personal Account</a></li>
+                {% else %}
+                    <li><a href="/main/personal/">Personal Account</a></li>
+                {% endif %}
+            {% else %}
+                <li><a href="/main/accounts/login/">Personal Account</a></li>
+            {% endif %}
         </ul>
         {% block content %}
         <div>
