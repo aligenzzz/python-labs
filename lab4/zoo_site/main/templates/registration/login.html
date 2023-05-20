@@ -7,9 +7,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login</title>
 </head>
-<body>
+<body style="height: 100%;
+             display: flex;
+             justify-content: center;
+             align-items: center; ">
 
-<h2>Login</h2>
+<div>
+    <h2>Login</h2>
 
     <form method="post">
       {% csrf_token %}
@@ -21,6 +25,8 @@
         </tr>
       </table>
     </form><p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+</div>
+
 
 </body>
 </html>
