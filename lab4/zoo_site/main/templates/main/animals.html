@@ -3,11 +3,18 @@
 {% block title %}All animals{% endblock %}
 
 {% block content %}
+  <style>
+    .animal-list {
+        column-count: 3;
+        column-gap: 20px;
+    }
+  </style>
+
   <h1>All animals</h1>
 
+  <div class="animal-list">
     {% if animal_list %}
     <ul>
-
       {% for animal in animal_list %}
       <li>
         <a href="/main/animals/{{ animal.id }}">{{ animal.name }}</a>
@@ -19,4 +26,10 @@
     {% else %}
       <p>There are no animals in the zoo.</p>
     {% endif %}
+  </div>
+
+  {% if user.is_authenticated %}
+    <p><a href="/main/animals/add/">Add</a></p>
+  {% endif %}
+
 {% endblock %}

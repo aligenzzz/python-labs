@@ -15,4 +15,8 @@
         <li>Area: {{ placement.area }}</li>
         <li><a href="/main/placements/{{ placement.id }}/animals">View Animals</a></li>
     </ul>
+    {% if user.is_authenticated %}
+        <p><a href="/main/placements/{{ placement.id }}/edit/">Edit</a></p>
+        <p><a href="/main/placements/{{ placement.id }}/delete/">Delete</a></p>
+    {% endif %}
 {% endblock %}

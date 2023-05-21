@@ -10,6 +10,7 @@ from .models import Animal, AnimalClass, Staffer, Post, Placement, Species, Coun
 # admin.site.register(Country)
 # admin.site.register(Fodder)
 
+
 @admin.register(Animal)
 class AnimalAdmin(admin.ModelAdmin):
     list_display = ('name', 'species', 'animal_class',
@@ -77,6 +78,7 @@ class CountryAdmin(admin.ModelAdmin):
         return Animal.objects.filter(country=obj).count()
 
     display_animals_count.short_description = 'Animals count'
+
 
 @admin.register(Fodder)
 class FodderAdmin(admin.ModelAdmin):

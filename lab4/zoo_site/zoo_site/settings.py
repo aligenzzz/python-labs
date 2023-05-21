@@ -106,11 +106,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
 USE_TZ = True
+
+# DATE_INPUT_FORMATS = ['%d.%m.%Y']
+# USE_L10N = False
 
 
 # Static files (CSS, JavaScript, Images)

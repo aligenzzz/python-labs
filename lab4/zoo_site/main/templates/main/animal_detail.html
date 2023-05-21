@@ -18,4 +18,11 @@
         <li>Info: {{ animal.info }}</li>
         <li>Daily feed: {{ animal.daily_feed }}</li>
     </ul>
+    {% if user.is_authenticated %}
+        {% if user.username == animal.staffer.username %}
+            <p><a href="/main/animals/{{ animal.id }}/edit/">Edit</a></p>
+            <p><a href="/main/animals/{{ animal.id }}/delete/">Delete</a></p>
+        {% endif %}
+    {% endif %}
+
 {% endblock %}

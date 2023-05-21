@@ -1,0 +1,14 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+  <h1>Settings</h1>
+  <form action="" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form.as_table }}
+    </table>
+    <input type="submit" value="Submit" />
+  </form>
+{% endblock %}

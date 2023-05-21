@@ -1,5 +1,6 @@
 from django.urls import path, include
 from . import views
+from django.contrib.auth.views import PasswordChangeView
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
@@ -17,5 +18,12 @@ urlpatterns = [
     path('personal/profile/', views.UserProfileView.as_view(), name='user_profile'),
     path('personal/animals/', views.UserAnimalsView.as_view(), name='user_animals'),
     path('personal/placements/', views.UserPlacementsView.as_view(), name='user_placements'),
-    path('personal/settings/', views.UserSettingsView.as_view(), name='user_settings'),
+    path('personal/settings/', views.UserUpdateView.as_view(), name='user_settings'),
+    path('animals/<int:pk>/edit/', views.AnimalUpdate.as_view(), name='edit_animal'),
+    path('animals/add/', views.AnimalCreate.as_view(), name='add_animal'),
+    path('animals/<int:pk>/delete/', views.AnimalDelete.as_view(), name='delete_animal'),
+    path('placements/<int:pk>/edit/', views.PlacementUpdate.as_view(), name='edit_placement'),
+    path('placements/add/', views.PlacementCreate.as_view(), name='add_placement'),
+    path('placements/<int:pk>/delete/', views.PlacementDelete.as_view(), name='delete_placement'),
+    path('<int:pk>/password/', PasswordChangeView.as_view(success_url='/main/personal/'), name='password_change'),
 ]
