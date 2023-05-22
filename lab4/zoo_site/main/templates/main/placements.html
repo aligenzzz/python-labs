@@ -3,6 +3,11 @@
 {% block title %}All placements{% endblock %}
 
 {% block content %}
+  <form method="GET" action="{% url 'placements' %}">
+    {{ search_form.as_p }}
+    <button type="submit">Search</button>
+  </form>
+
   <h1>All placements</h1>
 
     {% if placement_list %}

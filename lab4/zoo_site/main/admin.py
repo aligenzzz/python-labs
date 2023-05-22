@@ -16,6 +16,7 @@ class AnimalAdmin(admin.ModelAdmin):
     list_display = ('name', 'species', 'animal_class',
                     'admission_date', 'birth_date', 'fodder', 'daily_feed')
     list_filter = ('admission_date', 'daily_feed')
+    search_fields = ['^name', '^species__name', '^animal_class__name']
 
 
 @admin.register(Staffer)
@@ -53,6 +54,7 @@ class PostAdmin(admin.ModelAdmin):
 class PlacementAdmin(admin.ModelAdmin):
     list_display = ('name', 'number', 'basin', 'area',
                     'display_animals_count')
+    search_fields = ['^name']
 
     def display_animals_count(self, obj):
         return Animal.objects.filter(placement=obj).count()

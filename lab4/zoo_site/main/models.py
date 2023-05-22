@@ -63,6 +63,7 @@ class Placement(models.Model):
     area = models.FloatField()
 
     class Meta:
+        ordering = ['name', 'number']
         verbose_name = "Placement"
         verbose_name_plural = "Placements"
 
