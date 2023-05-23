@@ -91,17 +91,17 @@ class Staffer(models.Model):
 
 class Animal(models.Model):
     name = models.CharField(max_length=30)
-    species = models.ForeignKey(Species, on_delete=models.SET_NULL, null=True)
-    animal_class = models.ForeignKey(AnimalClass, on_delete=models.SET_NULL, null=True)
-    staffer = models.ForeignKey(Staffer, on_delete=models.SET_NULL, null=True, related_name='animals')
-    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)
-    placement = models.ForeignKey(Placement, on_delete=models.SET_NULL, null=True, related_name='animals')
-    fodder = models.ForeignKey(Fodder, on_delete=models.SET_NULL, null=True)
+    species = models.ForeignKey(Species, on_delete=models.SET_NULL, null=True, blank=True)
+    animal_class = models.ForeignKey(AnimalClass, on_delete=models.SET_NULL, null=True, blank=True)
+    staffer = models.ForeignKey(Staffer, on_delete=models.SET_NULL, null=True, blank=True, related_name='animals')
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True, blank=True)
+    placement = models.ForeignKey(Placement, on_delete=models.SET_NULL, null=True, blank=True, related_name='animals')
+    fodder = models.ForeignKey(Fodder, on_delete=models.SET_NULL, null=True, blank=True)
     admission_date = models.DateField(null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
     image = models.URLField(default='')
-    info = models.TextField()
-    daily_feed = models.FloatField()
+    info = models.TextField(default='')
+    daily_feed = models.FloatField(default=0)
 
     class Meta:
         ordering = ["admission_date"]

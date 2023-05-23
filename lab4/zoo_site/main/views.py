@@ -13,6 +13,8 @@ from django import forms
 from plotly.graph_objects import Bar, Layout, Figure
 import logging
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 
 logger = logging.getLogger(__name__)
@@ -168,6 +170,7 @@ class StafferPlacementsView(generic.ListView):
         return Placement.objects.filter(animals__in=staffer.animals.all()).distinct()
 
 
+@method_decorator(login_required, name='dispatch')
 class PersonalAccountView(View):
     @staticmethod
     def get(request):
@@ -177,6 +180,7 @@ class PersonalAccountView(View):
         )
 
 
+@method_decorator(login_required, name='dispatch')
 class UserProfileView(View):
     @staticmethod
     def get(request):
@@ -192,6 +196,7 @@ class UserProfileView(View):
         )
 
 
+@method_decorator(login_required, name='dispatch')
 class UserAnimalsView(generic.ListView):
     model = Animal
     context_object_name = 'animal_list'
@@ -202,6 +207,7 @@ class UserAnimalsView(generic.ListView):
         return Animal.objects.filter(staffer=staffer)
 
 
+@method_decorator(login_required, name='dispatch')
 class UserPlacementsView(generic.ListView):
     model = Placement
     context_object_name = 'placement_list'
@@ -218,6 +224,7 @@ class AccountUpdateForm(UserChangeForm):
         fields = ['email', 'first_name', 'last_name']
 
 
+@method_decorator(login_required, name='dispatch')
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = AccountUpdateForm
@@ -240,6 +247,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
             raise
 
 
+@method_decorator(login_required, name='dispatch')
 class AnimalCreate(CreateView):
     model = Animal
     fields = ['name', 'species', 'animal_class', 'country', 'placement', 'fodder',
@@ -261,6 +269,7 @@ class AnimalCreate(CreateView):
             raise
 
 
+@method_decorator(login_required, name='dispatch')
 class AnimalUpdate(UpdateView):
     model = Animal
     fields = ['placement', 'image', 'info', 'fodder', 'daily_feed']
@@ -279,6 +288,7 @@ class AnimalUpdate(UpdateView):
             raise
 
 
+@method_decorator(login_required, name='dispatch')
 class AnimalDelete(DeleteView):
     model = Animal
     success_url = reverse_lazy('user_animals')
@@ -296,6 +306,7 @@ class AnimalDelete(DeleteView):
             raise
 
 
+@method_decorator(login_required, name='dispatch')
 class PlacementCreate(CreateView):
     model = Placement
     fields = ['name', 'number', 'basin', 'area']
@@ -319,6 +330,7 @@ class PlacementCreate(CreateView):
             raise
 
 
+@method_decorator(login_required, name='dispatch')
 class PlacementUpdate(UpdateView):
     model = Placement
     fields = ['basin', 'area']
@@ -337,6 +349,7 @@ class PlacementUpdate(UpdateView):
             raise
 
 
+@method_decorator(login_required, name='dispatch')
 class PlacementDelete(DeleteView):
     model = Placement
     success_url = reverse_lazy('user_placements')
@@ -354,6 +367,7 @@ class PlacementDelete(DeleteView):
             raise
 
 
+@method_decorator(login_required, name='dispatch')
 class DiagramView(View):
     @staticmethod
     def get(request):
@@ -385,6 +399,7 @@ class DiagramView(View):
         )
 
 
+@method_decorator(login_required, name='dispatch')
 class StaticInfoView(View):
     @staticmethod
     def get(request):
