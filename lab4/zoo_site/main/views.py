@@ -134,8 +134,8 @@ class StafferListView(generic.ListView):
 
 
 class StafferDetailsView(View):
-    @staticmethod
-    def get(request, id):
+   # @staticmethod
+    def get(self, request, id):
         try:
             staffer = Staffer.objects.get(id=id)
         except Staffer.DoesNotExist:
@@ -257,6 +257,19 @@ class AnimalCreate(CreateView):
     def form_valid(self, form):
         form.instance.staffer = Staffer.objects.filter(username=self.request.user.username).first()
 
+        if form.cleaned_data['daily_feed'] <= 0:
+            form.add_error(None, 'Animal with daily_feed <= 0.')
+            logger.error(f'Failed to create animal by {self.request.user.username}!')
+            return self.form_invalid(form)
+
+        date1 = form.cleaned_data['admission_date']
+        date2 = form.cleaned_data['birth_date']
+
+        if date1 < date2:
+            form.add_error(None, 'Animal with dates diff < 0.')
+            logger.error(f'Failed to create animal by {self.request.user.username}!')
+            return self.form_invalid(form)
+
         try:
             response = super().form_valid(form)
 
@@ -276,6 +289,11 @@ class AnimalUpdate(UpdateView):
     success_url = reverse_lazy('user_animals')
 
     def form_valid(self, form):
+        if form.cleaned_data['daily_feed'] <= 0:
+            form.add_error(None, 'Animal with daily_feed <= 0.')
+            logger.error(f'Failed to update animal by {self.request.user.username}!')
+            return self.form_invalid(form)
+
         try:
             response = super().form_valid(form)
 
@@ -318,6 +336,11 @@ class PlacementCreate(CreateView):
             logger.error(f'Failed to create placement by {self.request.user.username}!')
             return self.form_invalid(form)
 
+        if form.cleaned_data['area'] <= 0:
+            form.add_error(None, 'Placement with area <= 0.')
+            logger.error(f'Failed to create placement by {self.request.user.username}!')
+            return self.form_invalid(form)
+
         try:
             response = super().form_valid(form)
 
@@ -337,6 +360,11 @@ class PlacementUpdate(UpdateView):
     success_url = reverse_lazy('user_placements')
 
     def form_valid(self, form):
+        if form.cleaned_data['area'] <= 0:
+            form.add_error(None, 'Placement with area <= 0.')
+            logger.error(f'Failed to update placement by {self.request.user.username}!')
+            return self.form_invalid(form)
+
         try:
             response = super().form_valid(form)
 
