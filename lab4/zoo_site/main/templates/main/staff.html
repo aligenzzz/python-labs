@@ -1,0 +1,22 @@
+{% extends 'main/index.html' %}
+
+{% block title %}All staff{% endblock %}
+
+{% block content %}
+  <h1>All staff</h1>
+
+    {% if staff_list %}
+    <ul>
+
+      {% for staffer in staff_list %}
+      <li>
+        <a href="/main/staff/{{ staffer.id }}">{{ staffer }}</a>
+      </li>
+      {% endfor %}
+
+    </ul>
+    {% else %}
+      <p>There are no staff in the zoo.</p>
+    {% endif %}
+
+{% endblock %}

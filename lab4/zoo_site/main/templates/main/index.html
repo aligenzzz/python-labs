@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}Zoo Home{% endblock %}</title>
+    <script>
+        function updateDateTime()
+        {
+            var currentDateTime = new Date();
+            var formattedDateTime = currentDateTime.toLocaleString();
+            var element = document.getElementById("current-datetime");
+            element.innerHTML = formattedDateTime;
+        }
+        setInterval(updateDateTime, 1000);
+    </script>
+</head>
+<body style="display: flex;
+             justify-content: center;">
+    <div>
+        <p style="text-align:center;" id="current-datetime"></p>
+        <ul style="background-color: #f8f8ff;">
+            <li><a href="/main/">Home</a></li>
+            <li><a href="/main/animals/">All animals</a></li>
+            <li><a href="/main/placements/">All placements</a></li>
+            <li><a href="/main/staff/">All staff</a></li>
+            {% if user.is_authenticated %}
+                {% if user.is_superuser %}
+                    <li><a href="/admin/">Personal Account</a></li>
+                {% else %}
+                    <li><a href="/main/personal/">Personal Account</a></li>
+                {% endif %}
+                <li><a href="/main/diagram/">Diagram</a></li>
+                <li><a href="/main/static_info/">Static Info</a></li>
+            {% else %}
+                <li><a href="/main/accounts/login/">Personal Account</a></li>
+            {% endif %}
+        </ul>
+        {% block content %}
+        <div>
+          <h1>ZOO HOME</h1>
+          <p>Welcome to <em>ZooSite</em>, a very basic Django website developed as a <em>LAB4</em>.</p>
+            <p><em>Random fact about cats: </em>{{ fact }}</p>
+          <img src="{{ image_url }}" alt="Such image doesn't exist :(" style="max-width: 500px;">
+        </div>
+        {% endblock %}
+    </div>
+</body>
+</html>

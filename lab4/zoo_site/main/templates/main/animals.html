@@ -1,0 +1,49 @@
+{% extends 'main/index.html' %}
+
+{% block title %}All animals{% endblock %}
+
+{% block content %}
+  <form method="GET" action="{% url 'animals' %}">
+    {{ search_form.as_p }}
+    <button type="submit">Search</button>
+  </form>
+
+  <style>
+    .animal-list {
+        column-count: 3;
+        column-gap: 10px;
+        row-gap: 10px;
+        padding: 0;
+    }
+
+    .animal-list li {
+        width: 100%;
+        height: 150px;
+        display: block;
+    }
+  </style>
+
+  <h1>All animals</h1>
+
+  <div class="animal-list">
+    {% if animal_list %}
+    <ul>
+      {% for animal in animal_list %}
+      <li>
+        <a href="/main/animals/{{ animal.id }}">{{ animal.name }}</a>
+        <img src="{{ animal.image }}" alt="Such image doesn't exist :(" style="max-width: 150px;
+                                                                               max-height: 100px;">
+      </li>
+      {% endfor %}
+
+    </ul>
+    {% else %}
+      <p>There are no animals in the zoo.</p>
+    {% endif %}
+  </div>
+
+  {% if user.is_authenticated %}
+    <p><a href="/main/animals/add/">Add</a></p>
+  {% endif %}
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Edit/add placement{% endblock %}
+
+{% block content %}
+  <h1>Edit/add placement</h1>
+  <form action="" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form.as_table }}
+    </table>
+    <input type="submit" value="Submit" />
+  </form>
+{% endblock %}

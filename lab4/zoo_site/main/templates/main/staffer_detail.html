@@ -1,0 +1,14 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Staffer Details{% endblock %}
+
+{% block content %}
+    <h1>Staffer Details</h1>
+    <ul>
+        <li>Name: {{ staffer.name }}</li>
+        <li>Post: {{ staffer.post }}</li>
+        <li>Phone number: {{ staffer.phone_number }}</li>
+        <li><a href="/main/staff/{{ staffer.id }}/animals">View Animals</a></li>
+        <li><a href="/main/staff/{{ staffer.id }}/placements">View Placements</a></li>
+    </ul>
+{% endblock %}

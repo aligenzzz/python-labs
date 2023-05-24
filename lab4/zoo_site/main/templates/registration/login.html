@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+</head>
+<body style="height: 100%;
+             display: flex;
+             justify-content: center;
+             align-items: center; ">
+
+<div>
+    <h2>Login</h2>
+
+    <form method="post">
+      {% csrf_token %}
+      <table>
+        {{ form.as_p }}
+        <tr>
+          <td>&nbsp;</td>
+          <td><input type="submit" value="Submit"></td>
+        </tr>
+      </table>
+    </form><p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+</div>
+
+
+</body>
+</html>

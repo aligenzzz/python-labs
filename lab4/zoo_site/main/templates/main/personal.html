@@ -1,0 +1,19 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Personal Account{% endblock %}
+
+{% block content %}
+  <h1>Hello, {{ user.username }}!</h1>
+  {% if request.session.last_change %}
+    <p>Your last change: {{ request.session.last_change }}</p>
+  {% else %}
+    <p>Your last change: <em>no data</em></p>
+  {% endif %}
+    <ul>
+        <li><a href="/main/personal/profile/">My Profile</a></li>
+        <li><a href="/main/personal/animals/">View Animals</a></li>
+        <li><a href="/main/personal/placements/">View Placements</a></li>
+        <li><a href="/main/personal/settings/">Settings</a></li>
+        <li><a href="/main/accounts/logout/">Log out</a></li>
+    </ul>
+{% endblock %}

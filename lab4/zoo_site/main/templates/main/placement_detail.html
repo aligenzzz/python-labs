@@ -1,0 +1,22 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Placement Details{% endblock %}
+
+{% block content %}
+    <h1>Placement Details</h1>
+    <ul>
+        <li>Number: {{ placement.number }}</li>
+        <li>Name: {{ placement.name }}</li>
+        {% if placement.basin %}
+            <li>There is basin!!!</li>
+        {% else %}
+            <li>There isn't basin :(</li>
+        {% endif %}
+        <li>Area: {{ placement.area }}</li>
+        <li><a href="/main/placements/{{ placement.id }}/animals">View Animals</a></li>
+    </ul>
+    {% if user.is_authenticated %}
+        <p><a href="/main/placements/{{ placement.id }}/edit/">Edit</a></p>
+        <p><a href="/main/placements/{{ placement.id }}/delete/">Delete</a></p>
+    {% endif %}
+{% endblock %}

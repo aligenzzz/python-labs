@@ -1,0 +1,28 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Animal Details{% endblock %}
+
+{% block content %}
+  <h1>Animal Details</h1>
+  <img src="{{ animal.image }}" alt="Such image doesn't exist :(" style="max-width: 200px;">
+    <ul>
+        <li>Name: {{ animal.name }}</li>
+        <li>Species: {{ animal.species }}</li>
+        <li>Animal class: {{ animal.animal_class }}</li>
+        <li>Staffer: <a href="/main/staff/{{ animal.staffer.id }}">{{ animal.staffer }}</a></li>
+        <li>Country: {{ animal.country }}</li>
+        <li>Placement: <a href="/main/placements/{{ animal.placement.id }}">{{ animal.placement }}</a></li>
+        <li>Fodder: {{ animal.fodder }}</li>
+        <li>Admission date: {{ animal.admission_date }}</li>
+        <li>Birth date: {{ animal.birth_date }}</li>
+        <li>Info: {{ animal.info }}</li>
+        <li>Daily feed: {{ animal.daily_feed }}</li>
+    </ul>
+    {% if user.is_authenticated %}
+        {% if user.username == animal.staffer.username %}
+            <p><a href="/main/animals/{{ animal.id }}/edit/">Edit</a></p>
+            <p><a href="/main/animals/{{ animal.id }}/delete/">Delete</a></p>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}

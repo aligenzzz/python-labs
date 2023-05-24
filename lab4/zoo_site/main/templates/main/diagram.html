@@ -1,0 +1,13 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Diagram{% endblock %}
+
+{% block content %}
+
+  <h1>Diagram</h1>
+
+  <div style="width: 500px; height: 300px;">
+    {{ plot_div|safe }}
+  </div>
+
+{% endblock %}

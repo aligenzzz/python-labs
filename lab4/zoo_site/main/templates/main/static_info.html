@@ -1,0 +1,14 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Static Info{% endblock %}
+
+{% block content %}
+  <h1>Static Info</h1>
+     <ul>
+        <li><em>Count of animals: </em>{{ animals_count }}</li>
+        <li><em>Count of placements: </em>{{ placements_count }}</li>
+        <li><em>Count of staff: </em>{{ staff_count }}</li>
+        <li><em>New animal: </em><a href="/main/animals/{{ animal.id }}/">{{ animal }}</a></li>
+        <li><em>The most consumed fodder: </em>{{ fodder_name }}</li>
+    </ul>
+{% endblock %}

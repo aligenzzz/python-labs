@@ -1,0 +1,31 @@
+{% extends 'main/index.html' %}
+
+{% block title %}All placements{% endblock %}
+
+{% block content %}
+  <form method="GET" action="{% url 'placements' %}">
+    {{ search_form.as_p }}
+    <button type="submit">Search</button>
+  </form>
+
+  <h1>All placements</h1>
+
+    {% if placement_list %}
+    <ul>
+
+      {% for placement in placement_list %}
+      <li>
+        <a href="/main/placements/{{ placement.id }}">{{ placement }}</a>
+      </li>
+      {% endfor %}
+
+    </ul>
+    {% else %}
+      <p>There are no placements in the zoo.</p>
+    {% endif %}
+
+  {% if user.is_authenticated %}
+    <p><a href="/main/placements/add/">Add</a></p>
+  {% endif %}
+
+{% endblock %}
